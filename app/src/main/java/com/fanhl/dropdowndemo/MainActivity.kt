@@ -10,6 +10,9 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.PopupWindow
+import com.zyyoona7.lib.EasyPopup
+import com.zyyoona7.lib.HorizontalGravity
+import com.zyyoona7.lib.VerticalGravity
 import kotlinx.android.synthetic.main.activity_main.*
 import kotlinx.android.synthetic.main.popup_vehicle_picker.*
 import kotlinx.android.synthetic.main.popup_vehicle_picker.view.*
@@ -23,10 +26,30 @@ class MainActivity : AppCompatActivity() {
 
         btn_1.setOnClickListener {
             vehiclePicker.popup(btn_1)
+//            window.attributes.alpha
         }
 
         btn_2.setOnClickListener {
             VehicleDialogFragment.popup(supportFragmentManager)
+        }
+
+        btn_3.setOnClickListener {
+            EasyPopup(this@MainActivity)
+                    .setContentView<EasyPopup>(R.layout.popup_vehicle_picker)
+//                    .setAnimationStyle<EasyPopup>(R.style.Cir)
+                    //是否允许点击PopupWindow之外的地方消失
+                    .setFocusAndOutsideEnable<EasyPopup>(true)
+                    //允许背景变暗
+                    .setBackgroundDimEnable<EasyPopup>(true)
+                    //变暗的透明度(0-1)，0为完全透明
+                    .setDimValue<EasyPopup>(0.4f)
+                    .createPopup<EasyPopup>()
+                    .apply {
+                        contentView.button.setOnClickListener {
+                            dismiss()
+                        }
+                    }
+                    .showAtAnchorView(btn_3, VerticalGravity.BELOW, HorizontalGravity.CENTER, 0, 0)
         }
     }
 }
@@ -57,6 +80,9 @@ class VehiclePicker {
         popupWindow!!.contentView.measure(makeDropDownMeasureSpec(popupWindow!!.width), makeDropDownMeasureSpec(popupWindow!!.height))
         val offsetX = (anchor.width - popupWindow!!.contentView.measuredWidth) / 2
         val offsetY = 0
+
+        popupWindow!!.isOutsideTouchable = false
+
 
         PopupWindowCompat.showAsDropDown(popupWindow!!, anchor, offsetX, offsetY, Gravity.START)
     }
